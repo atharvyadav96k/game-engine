@@ -1,8 +1,10 @@
 import pygame
+from ..element import Element
 from ..text import Text
 
-class Button:
+class Button(Element):
     def __init__(self, display, text, position, size):
+        self.STANDERD_INPUT = True
         self.text = text
         self.position = position
         self.size = size

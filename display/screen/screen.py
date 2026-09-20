@@ -5,8 +5,10 @@ class Screen():
         self.children = []
         self.screenManager = screenManager
 
-    def inputs(self, event):
-        pass
+    def inputs(self, events):
+        for child in self.children:
+            if child.isAcceptInput():
+                child.inputs(events)
     
     def update(self):
         pass
