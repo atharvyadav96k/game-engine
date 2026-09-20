@@ -7,24 +7,19 @@ class Engine():
     def __init__(self):
         self.display = pygame.display.set_mode((1200, 720))
         self.screenManager = ScreenManager()
-        self.mainScreen = MainScreen(self.display)
-        self.levelScreen = LevelScreen(self.display)
-        self.screenManager.show(self.mainScreen)
+        self.screenManager.registerScreen("main-screen", MainScreen(self.display, self.screenManager))
+        self.screenManager.registerScreen("level-screen", LevelScreen(self.display, self.screenManager))
+        self.screenManager.route("main-screen")
 
     def start(self):
         running = True
         while running:
             self.display.fill((0, 0, 0))
-            for event in pygame.event.get():
+            inputEvents = pygame.event.get()
+            for event in inputEvents:
                 if event.type == pygame.QUIT:
                     running = False
-                self.screenManager.inputs(event)
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_RETURN:
-                        self.screenManager.show(self.levelScreen)
-                    if event.key == pygame.K_BACKSPACE:
-                        self.screenManager.back()
-
+            self.screenManager.inputs(inputEvents)
             self.screenManager.update()
             self.screenManager.render()
             pygame.display.flip()

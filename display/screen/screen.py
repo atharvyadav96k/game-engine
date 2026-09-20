@@ -1,8 +1,9 @@
 
 class Screen():
-    def __init__(self, display):
+    def __init__(self, display, screenManager):
         self.display = display
         self.children = []
+        self.screenManager = screenManager
 
     def inputs(self, event):
         pass
