@@ -2,6 +2,7 @@
 class Screen():
     def __init__(self, display):
         self.display = display
+        self.children = []
 
     def inputs(self, event):
         pass
@@ -10,4 +11,5 @@ class Screen():
         pass
 
     def render(self):
-        pass
+        for child in self.children:
+            child.render()
