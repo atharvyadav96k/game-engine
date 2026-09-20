@@ -1,8 +1,11 @@
 import pygame
 
 class Element:
-    def __init__(self, display, text, position, size):
+    def __init__(self, id):
+        self.id = id
         self.STANDERD_INPUT = False
+        self.isGetTriggerByEvent = False
+        self.lastEvent = None
 
     def inputs(self, events):
         pass
@@ -12,6 +15,17 @@ class Element:
 
     def update(self):
         pass
+
+    def getEvent(self):
+        temp = self.lastEvent
+        self.lastEvent = None
+        return {
+            'id': self.id,
+            'event': temp
+        }
+
+    def isTriggerd(self):
+        return self.isGetTriggerByEvent
 
     def render(self):
         pass

@@ -3,7 +3,8 @@ from ..element import Element
 from ..text import Text
 
 class Button(Element):
-    def __init__(self, display, text, position, size):
+    def __init__(self, display, id,text, position, size):
+        super().__init__(id)
         self.STANDERD_INPUT = True
         self.text = text
         self.position = position
@@ -11,7 +12,7 @@ class Button(Element):
         self.display = display
         self.color = (100, 100, 100)
         self.rect = pygame.Rect(self.position[0], self.position[1], self.size[0], self.size[1])
-        self.displayText = Text(self.display, text, position)
+        self.displayText = Text(self.display, "",text, position)
 
     def inputs(self, events):
         for event in events:
@@ -20,8 +21,8 @@ class Button(Element):
                     x = event.pos[0]
                     y = event.pos[1]
                     if x > self.position[0] and x < self.position[0] + self.size[0] and y > self.position[0] and y < self.position[1] + self.size[1]:
-                        return True
-        return False
+                        self.isGetTriggerByEvent = True
+                        self.lastEvent = event     
 
     def update(self):
         pass

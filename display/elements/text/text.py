@@ -2,8 +2,8 @@ import pygame
 from ..element import Element
 
 class Text(Element):
-    def __init__(self, display, text, position):
-        super().__init__(display, text, position, None)
+    def __init__(self, display, id, text, position):
+        super().__init__(id)
         self.display = display
         self.text = text
         self.position = position
