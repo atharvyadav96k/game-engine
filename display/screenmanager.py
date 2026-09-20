@@ -4,13 +4,14 @@ class ScreenManager():
         self.stack = []
         self.routes = {}
 
-    def registerScreen(self, route, screen):
-        self.routes[route] = screen
+    def registerScreen(self, route, createScreen):
+        self.routes[route] = createScreen
 
     def route(self, route):
-        if self.routes.get(route) == None:
+        createScreen = self.routes.get(route)
+        if createScreen is None:
             raise Exception("Invalid Route")
-        self.stack.append(self.routes.get(route))
+        self.stack.append(createScreen())
 
     def back(self):
         if len(self.stack) <= 1:

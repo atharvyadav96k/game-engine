@@ -7,8 +7,8 @@ class Engine():
     def __init__(self):
         self.display = pygame.display.set_mode((1200, 720))
         self.screenManager = ScreenManager()
-        self.screenManager.registerScreen("main-screen", MainScreen(self.display, self.screenManager))
-        self.screenManager.registerScreen("level-screen", LevelScreen(self.display, self.screenManager))
+        self.screenManager.registerScreen("main-screen", lambda: MainScreen(self.display, self.screenManager))
+        self.screenManager.registerScreen("level-screen", lambda: LevelScreen(self.display, self.screenManager))
         self.screenManager.route("main-screen")
 
     def start(self):
