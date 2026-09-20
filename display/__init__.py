@@ -1,2 +1,2 @@
-from screenmanager import ScreenManager
-from display import Screen
+from .screenmanager import ScreenManager
+from .screen import MainScreen

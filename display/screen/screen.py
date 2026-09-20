@@ -1,7 +1,7 @@
 
 class Screen():
     def __init__(self, display):
-        pass
+        self.display = display
 
     def inputs(self, event):
         pass
