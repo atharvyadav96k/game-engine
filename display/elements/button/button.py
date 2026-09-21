@@ -9,10 +9,12 @@ defaultButtonStyle = Style({
     Property.COLOR: (26, 26, 26),
     Property.BACKGROUND : (255, 255, 255),
     Property.BORDER_COLOR: (168, 168, 168),
+    Property.BORDER_WIDTH: 2,
     Property.PADDING_HORIZANTAL: 10,
     Property.PADDING_VERTICAL: 10,
     Property.TEXT_ALIGN_HORINZANTAL: TextAlign.ALIGN_CENTER,
-    Property.TEXT_ALIGN_VERTICAL: TextAlign.ALIGN_CENTER
+    Property.TEXT_ALIGN_VERTICAL: TextAlign.ALIGN_CENTER,
+    Property.BORDER_RADIUS: 0
 })
 
 class Button(Element):
@@ -27,9 +29,9 @@ class Button(Element):
             Property.COLOR: self.elementStyle.color
         }))
         text_width, text_height = self.displayText.getSize()
-        self.size = (text_width+(self.elementStyle.padding_vertical * 2), text_height+(self.elementStyle.padding_horizantal * 2))
+        self.size = (text_width + (self.elementStyle.padding_horizantal * 2), text_height + (self.elementStyle.padding_vertical * 2))
         self.rect = pygame.Rect(self.position[0], self.position[1], self.size[0], self.size[1])
-        self.displayText.position = self._alignTextPosition(text_width, text_height)
+        self._alignTextPosition(text_width, text_height)
 
     def _alignTextPosition(self, text_width, text_height):
         horizontal_align = self.elementStyle.text_align_horizantal
@@ -49,7 +51,7 @@ class Button(Element):
         else:
             y = self.rect.y + (self.rect.height - text_height) / 2
 
-        return (x, y)
+        self.displayText.position = (x, y)
 
     def inputs(self, events):
         for event in events:
@@ -65,5 +67,9 @@ class Button(Element):
         pass
 
     def render(self):
-        pygame.draw.rect(self.display, self.elementStyle.background, self.rect)
+        borderRadius = self.elementStyle.border_radius or 0
+        pygame.draw.rect(self.display, self.elementStyle.background, self.rect, border_radius=borderRadius)
+        borderWidth = self.elementStyle.border_width or 0
+        if borderWidth > 0:
+            pygame.draw.rect(self.display, self.elementStyle.border_color, self.rect, width=borderWidth, border_radius=borderRadius)
         self.displayText.render()
