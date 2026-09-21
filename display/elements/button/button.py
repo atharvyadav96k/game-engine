@@ -59,7 +59,7 @@ class Button(Element):
                 if event.button == 1:
                     x = event.pos[0]
                     y = event.pos[1]
-                    if x > self.position[0] and x < self.position[0] + self.size[0] and y > self.position[0] and y < self.position[1] + self.size[1]:
+                    if x > self.position[0] and x < self.position[0] + self.size[0] and y > self.position[1] and y < self.position[1] + self.size[1]:
                         self.isGetTriggerByEvent = True
                         self.lastEvent = event     
 

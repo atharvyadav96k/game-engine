@@ -20,6 +20,7 @@ class Element:
     def getEvent(self):
         temp = self.lastEvent
         self.lastEvent = None
+        self.isGetTriggerByEvent = False
         return {
             'id': self.id,
             'event': temp
