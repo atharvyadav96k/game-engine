@@ -1,5 +1,7 @@
 import pygame
-from display import ScreenManager, MainScreen, LevelScreen
+from display import ScreenManager
+from sceans.mainscreen import MainScreen
+from sceans.levelscreen import LevelScreen
 
 pygame.init()
 

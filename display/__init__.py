@@ -1,6 +1,4 @@
 from .screenmanager import ScreenManager
-from .screen import MainScreen
-from .screen import LevelScreen
 
 from .elements.text.h1 import H1
 from .elements.text.h2 import H2
