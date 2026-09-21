@@ -1,11 +1,12 @@
 import pygame
 
 class Element:
-    def __init__(self, id):
+    def __init__(self, id, style=None):
         self.id = id
         self.STANDERD_INPUT = False
         self.isGetTriggerByEvent = False
         self.lastEvent = None
+        self.elementStyle = style
 
     def inputs(self, events):
         pass

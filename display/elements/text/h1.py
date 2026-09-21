@@ -1,8 +1,8 @@
-from .text import Text
+from .text import Text, defaultTextStyle
 import pygame
 
 class H1(Text):
-    def __init__(self, display, id,text, position):
-        super().__init__(display, id, text, position)
+    def __init__(self, display, id, text, position, style=defaultTextStyle):
+        super().__init__(display, id, text, position, style)
         self.size = 60
-        self.font = pygame.font.Font(None, self.size)
+        self.font = pygame.font.Font(None, self.elementStyle.font_size)
