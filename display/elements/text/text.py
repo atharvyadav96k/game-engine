@@ -16,6 +16,9 @@ class Text(Element):
         self.position = position
         self.font = pygame.font.Font(None, self.elementStyle.font_size)
 
+    def getSize(self):
+        return self.font.size(self.text)
+
     def render(self):
         surface = self.font.render(self.text, True, self.elementStyle.color)
         self.display.blit(surface, self.position)

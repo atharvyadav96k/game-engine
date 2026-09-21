@@ -1,18 +1,55 @@
 import pygame
 from ..element import Element
 from ..text import Text
+from ...styles.style import Style
+from ...styles.stylepproperties import Property, TextAlign
+
+defaultButtonStyle = Style({
+    Property.FONT_SIZE : 20,
+    Property.COLOR: (26, 26, 26),
+    Property.BACKGROUND : (255, 255, 255),
+    Property.BORDER_COLOR: (168, 168, 168),
+    Property.PADDING_HORIZANTAL: 10,
+    Property.PADDING_VERTICAL: 10,
+    Property.TEXT_ALIGN_HORINZANTAL: TextAlign.ALIGN_CENTER,
+    Property.TEXT_ALIGN_VERTICAL: TextAlign.ALIGN_CENTER
+})
 
 class Button(Element):
-    def __init__(self, display, id,text, position, size):
-        super().__init__(id)
+    def __init__(self, display, id,text, position, style=defaultButtonStyle):
+        super().__init__(id, style)
         self.STANDERD_INPUT = True
         self.text = text
         self.position = position
-        self.size = size
         self.display = display
-        self.color = (100, 100, 100)
+        self.displayText = Text(self.display, "",text, position, Style({
+            Property.FONT_SIZE: self.elementStyle.font_size,
+            Property.COLOR: self.elementStyle.color
+        }))
+        text_width, text_height = self.displayText.getSize()
+        self.size = (text_width+(self.elementStyle.padding_vertical * 2), text_height+(self.elementStyle.padding_horizantal * 2))
         self.rect = pygame.Rect(self.position[0], self.position[1], self.size[0], self.size[1])
-        self.displayText = Text(self.display, "",text, position)
+        self.displayText.position = self._alignTextPosition(text_width, text_height)
+
+    def _alignTextPosition(self, text_width, text_height):
+        horizontal_align = self.elementStyle.text_align_horizantal
+        vertical_align = self.elementStyle.text_align_vertical
+
+        if horizontal_align == TextAlign.ALIGN_LEFT:
+            x = self.rect.x + self.elementStyle.padding_horizantal
+        elif horizontal_align == TextAlign.ALIGN_RIGHT:
+            x = self.rect.x + self.rect.width - text_width - self.elementStyle.padding_horizantal
+        else:
+            x = self.rect.x + (self.rect.width - text_width) / 2
+
+        if vertical_align == TextAlign.ALIGN_LEFT:
+            y = self.rect.y + self.elementStyle.padding_vertical
+        elif vertical_align == TextAlign.ALIGN_RIGHT:
+            y = self.rect.y + self.rect.height - text_height - self.elementStyle.padding_vertical
+        else:
+            y = self.rect.y + (self.rect.height - text_height) / 2
+
+        return (x, y)
 
     def inputs(self, events):
         for event in events:
@@ -28,5 +65,5 @@ class Button(Element):
         pass
 
     def render(self):
-        pygame.draw.rect(self.display, self.color, self.rect)
+        pygame.draw.rect(self.display, self.elementStyle.background, self.rect)
         self.displayText.render()
