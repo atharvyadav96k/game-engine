@@ -1,6 +1,7 @@
 import pygame
 from ..element import Element
 from ..text import Text
+from ..rectangle.rectangle import Rectangle
 from ...styles.style import Style
 from ...styles.stylepproperties import Property, TextAlign
 
@@ -31,6 +32,12 @@ class Button(Element):
         text_width, text_height = self.displayText.getSize()
         self.size = (text_width + (self.elementStyle.padding_horizantal * 2), text_height + (self.elementStyle.padding_vertical * 2))
         self.rect = pygame.Rect(self.position[0], self.position[1], self.size[0], self.size[1])
+        self.background = Rectangle(self.display, "", self.position, self.size, Style({
+            Property.BACKGROUND: self.elementStyle.background,
+            Property.BORDER_COLOR: self.elementStyle.border_color,
+            Property.BORDER_WIDTH: self.elementStyle.border_width,
+            Property.BORDER_RADIUS: self.elementStyle.border_radius
+        }))
         self._alignTextPosition(text_width, text_height)
 
     def _alignTextPosition(self, text_width, text_height):
@@ -67,9 +74,5 @@ class Button(Element):
         pass
 
     def render(self):
-        borderRadius = self.elementStyle.border_radius or 0
-        pygame.draw.rect(self.display, self.elementStyle.background, self.rect, border_radius=borderRadius)
-        borderWidth = self.elementStyle.border_width or 0
-        if borderWidth > 0:
-            pygame.draw.rect(self.display, self.elementStyle.border_color, self.rect, width=borderWidth, border_radius=borderRadius)
+        self.background.render()
         self.displayText.render()
