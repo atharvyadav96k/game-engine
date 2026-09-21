@@ -2,6 +2,7 @@ import pygame
 from display import ScreenManager
 from sceans.mainscreen import MainScreen
 from sceans.levelscreen import LevelScreen
+from sceans.gamesean import GameSean
 
 pygame.init()
 
@@ -11,6 +12,7 @@ class Engine():
         self.screenManager = ScreenManager()
         self.screenManager.registerScreen("main-screen", lambda: MainScreen(self.display, self.screenManager))
         self.screenManager.registerScreen("level-screen", lambda: LevelScreen(self.display, self.screenManager))
+        self.screenManager.registerScreen("game", lambda: GameSean(self.display, self.screenManager))
         self.screenManager.route("main-screen")
 
     def start(self):

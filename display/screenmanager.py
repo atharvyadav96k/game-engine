@@ -3,11 +3,18 @@ class ScreenManager():
     def __init__(self):
         self.stack = []
         self.routes = {}
+        self.routeData = None
 
     def registerScreen(self, route, createScreen):
         self.routes[route] = createScreen
 
-    def route(self, route, popPreScreen=True):
+    def getRouteData(self):
+        temp = self.routeData
+        self.routeData = {}
+        return temp
+
+    def route(self, route, popPreScreen=True, data=None):
+        self.routeData = data
         createScreen = self.routes.get(route)
         if createScreen is None:
             raise Exception("Invalid Route")
