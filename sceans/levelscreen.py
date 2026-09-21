@@ -1,4 +1,4 @@
-from .screen import Screen
+from ..display.screen.screen import Screen
 from display.elements.button.playbutton import PlayButton, Button
 from display.elements.text.h1 import H1
 
