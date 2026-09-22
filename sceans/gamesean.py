@@ -18,13 +18,13 @@ class GameSean(Screen):
         self.children.append(Button(self.display, "pause", "II", (10, 10)))
 
     def game_object(self):
-        self.player = GameObject("player", Transform(
+        self.player = GameObject(self.display ,"player", Transform(
                     (100, 100),
                     (20, 20)
                 ))
         self.player.rigidbody = RigidBody(
-                (10, 0),
-                (0, 0)
+                (100, 0),
+                (0, 100)
         )
         return [self.player]
 
@@ -36,7 +36,10 @@ class GameSean(Screen):
                 event = child.getEvent()
                 if event.get("id") == "pause":
                     self.screenManager.route("level-screen")
-                
+
+        for objects in self.game_objects:
+            objects.render()
+
         self.physics.update(delta)
         print(self.player.transform.position)
         self.prev_time = self.currt_time

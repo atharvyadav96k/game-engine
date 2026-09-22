@@ -1,5 +1,6 @@
-from ..display.elements.rectangle import Rectangle
-import pygame
+from display.elements.rectangle import Rectangle
+from display.styles.style import Style
+from display.styles.stylepproperties import Property
 
 class GameObject():
     def __init__(self, display ,id, transform):
@@ -12,4 +13,7 @@ class GameObject():
         pass
 
     def render(self):
-        self.rect = Rectangle(self.display, "", self.transform.position, self.transform.size)
+        self.rect = Rectangle(self.display, "", self.transform.position, self.transform.size, Style({
+            Property.BACKGROUND: (255, 0, 0),
+        }))
+        self.rect.render()
