@@ -8,6 +8,7 @@ class GameObject():
         self.transform = transform
         self.rigidbody = None
         self.display = display
+        self.collider = None
         
     def update(self):
         pass
