@@ -63,7 +63,7 @@ class GameSean(Screen):
              mass=1
         )
 
-        self.player1.collider = Collider(self.player1, PhysicsMaterial(restitution=0.7, friction=0.3))
+        self.player1.collider = Collider(self.player1, PhysicsMaterial(restitution=0.7, friction=0.2))
         self.ground1.collider = Collider(self.ground1, PhysicsMaterial(restitution=0.0, friction=0.8))
         self.ground2.collider = Collider(self.ground2, PhysicsMaterial(restitution=0.0, friction=0.2))
         self.boll1.collider = Collider(self.boll1, PhysicsMaterial(restitution=1, friction=0))
@@ -81,9 +81,9 @@ class GameSean(Screen):
 
         keys = pygame.key.get_pressed()
         if keys[pygame.K_d]:
-            self.player1.transform.move(speed*self.delta, 0)
+            self.player1.rigidbody.set_velocity((speed, 0))
         if keys[pygame.K_a]:
-            self.player1.transform.move(-speed*self.delta, 0) 
+            self.player1.rigidbody.set_velocity((-speed, 0))
 
     def update(self):
         self.currt_time = time()
