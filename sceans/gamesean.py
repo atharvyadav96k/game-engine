@@ -42,17 +42,41 @@ class GameSean(Screen):
              (400, 400),
              (500, 10)
         ))
+        self.boll1 = GameObject(self.display, "boll-1", Transform(
+            (40, 370),
+            (20, 20)),
+            (255, 255, 255)
+        )
+        self.boll1.rigidbody = RigidBody(
+            (50, 0),
+            (0, 0),
+            mass=1
+        )
+        self.boll2 = GameObject(self.display, "boll-2", Transform(
+            (150, 370),
+            (20, 20)),
+            (0, 255, 0)     
+        )
+        self.boll2.rigidbody = RigidBody(
+             (-50, 0),
+             (0, 0),
+             mass=1
+        )
+
         self.player1.collider = Collider(self.player1, PhysicsMaterial(restitution=0.7, friction=0.3))
         self.ground1.collider = Collider(self.ground1, PhysicsMaterial(restitution=0.0, friction=0.8))
         self.ground2.collider = Collider(self.ground2, PhysicsMaterial(restitution=0.0, friction=0.2))
-        return [self.player1, self.ground1, self.ground2]
+        self.boll1.collider = Collider(self.boll1, PhysicsMaterial(restitution=1, friction=0))
+        self.boll2.collider = Collider(self.boll2, PhysicsMaterial(restitution=1, friction=0))
+
+        return [self.player1, self.ground1, self.ground2,self.boll1, self.boll2]
 
     def inputs(self, events):
         speed = 400
         super().inputs(events)
         for event in events:
              if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE and self.collisionSystem.are_colliding(self.ground2, self.player1):
+                if event.key == pygame.K_SPACE:
                     self.player1.rigidbody.add_velocity((0, -400))
 
         keys = pygame.key.get_pressed()
