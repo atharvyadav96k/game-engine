@@ -19,6 +19,7 @@ class GameSean(Screen):
         self.collisionSystem = CollisionSystem(self.game_objects)
         self.physics = PhysicsSystem(self.game_objects, gravity=(0, 980.0))
         self.shockwaves = []
+        self.physics_substeps = 4
         self.prev_time = time()
         self.currt_time = time()
 
@@ -34,7 +35,7 @@ class GameSean(Screen):
         wall_material = PhysicsMaterial(restitution=0.3, friction=0.5)
 
         self.player1 = GameObject(self.display ,"player-1", Transform(
-                    (300, 150),
+                    (350, 580),
                     (20, 20)
                 ))
         self.player1.rigidbody = RigidBody(
@@ -82,6 +83,40 @@ class GameSean(Screen):
              (0, 0),
         )
 
+        block_size = 20
+        floor_y = 600
+        wall_height = 4
+        half_gap = 30
+
+        self.blocks = []
+
+        def add_block(name, x, y):
+            block = GameObject(self.display, name, Transform((x, y), (block_size, block_size)), (180, 60, 30))
+            block.rigidbody = RigidBody((0, 0), (0, 0), mass=1.0, use_gravity=True)
+            block.collider = Collider(block, PhysicsMaterial(restitution=0, friction=0.6))
+            self.blocks.append(block)
+
+        left_x = self.player1.transform.position[0] - half_gap - block_size
+        right_x = self.player1.transform.position[0] + half_gap
+        
+        for level in range(wall_height):
+            y = floor_y - block_size * (level + 1)
+            add_block(f"wall-left-{level}", left_x, y)
+            add_block(f"wall-right-{level}", right_x, y)
+
+        y = floor_y - block_size * (wall_height + 1)
+        row = 0
+        while right_x - left_x > block_size:
+            left_x += block_size / 2
+            right_x -= block_size / 2
+            add_block(f"arch-left-{row}", left_x, y)
+            add_block(f"arch-right-{row}", right_x, y)
+            y -= block_size
+            row += 1
+
+        peak_x = (left_x + right_x) / 2
+        add_block("peak", peak_x, y)
+
         self.player1.collider = Collider(self.player1, PhysicsMaterial(restitution=0.2, friction=0.2))
         self.wall_top.collider = Collider(self.wall_top, wall_material)
         self.wall_bottom.collider = Collider(self.wall_bottom, wall_material)
@@ -93,7 +128,8 @@ class GameSean(Screen):
         return [
             self.player1,
             self.wall_top, self.wall_bottom, self.wall_left, self.wall_right,
-            self.boll1, self.boll2
+            self.boll1, self.boll2,
+            *self.blocks
         ]
 
     def trigger_shockwave(self, origin, max_radius=300.0, expansion_speed=500.0, strength=800.0,
