@@ -14,6 +14,10 @@ class Collider():
             self.game_object.transform.size
         )
 
+    def get_center(self):
+        rect = self.get_rect()
+        return (rect.centerx, rect.centery)
+
     def is_physics_response_enabled(self):
         return self.enable_physics_response
 
