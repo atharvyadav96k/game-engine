@@ -5,6 +5,7 @@ from physics.rigidbody import RigidBody
 from physics.physics_system import PhysicsSystem
 from physics.collsion_system import CollisionSystem
 from physics.colliders.collider import Collider
+from physics.physics_material import PhysicsMaterial
 from time import time
 
 class GameSean(Screen):
@@ -13,7 +14,7 @@ class GameSean(Screen):
         self.game_sean()
         self.game_objects = self.game_object()
         self.collisionSystem = CollisionSystem(self.game_objects)
-        self.physics = PhysicsSystem(self.game_objects)
+        self.physics = PhysicsSystem(self.game_objects, gravity=(0, 980.0))
         self.prev_time = time()
         self.currt_time = time()
 
@@ -26,8 +27,10 @@ class GameSean(Screen):
                     (20, 20)
                 ))
         self.player1.rigidbody = RigidBody(
-                (0, 20),
-                (0, 0)
+                (0, 0),
+                (0, 0),
+                mass=1.0,
+                use_gravity=True
         )
         self.player2 = GameObject(self.display, "player-2", Transform(
                 (100, 200),
@@ -38,9 +41,9 @@ class GameSean(Screen):
              (100, 300),
              (500, 10)
         ))
-        self.player2.collider = Collider(self.player2)
-        self.player1.collider = Collider(self.player1)
-        self.player3.collider = Collider(self.player3)
+        self.player1.collider = Collider(self.player1, PhysicsMaterial(restitution=0.7, friction=0.3))
+        self.player2.collider = Collider(self.player2, PhysicsMaterial(restitution=0.4, friction=0.8))
+        self.player3.collider = Collider(self.player3, PhysicsMaterial(restitution=0.0, friction=0.2))
         return [self.player1, self.player2, self.player3]
 
     def update(self):

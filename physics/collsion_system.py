@@ -1,8 +1,10 @@
+from physics.colliders.collision_respose import CollisionResponse
 
 class CollisionSystem():
     def __init__(self, game_objects):
         self.game_objects = game_objects
         self.idx = 0
+        self.collision_response = CollisionResponse()
 
     def update(self):
         for i in range(len(self.game_objects)):
@@ -25,4 +27,4 @@ class CollisionSystem():
         )
 
     def on_collision(self, object_a, object_b):
-        print(str(self.idx) + ")" + object_a.id + " : " + object_b.id)
+        self.collision_response.resolve(object_a, object_b)
