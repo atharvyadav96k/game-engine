@@ -4,9 +4,10 @@ from physics.physics_material import PhysicsMaterial
 
 
 class CollisionResponse():
-    def __init__(self, percent_correction=0.8, slop=0.01):
+    def __init__(self, percent_correction=0.8, slop=0.01, rest_velocity_threshold=50.0):
         self.percent_correction = percent_correction
         self.slop = slop
+        self.rest_velocity_threshold = rest_velocity_threshold
 
     def resolve(self, object_a, object_b):
         collider_a = object_a.collider
@@ -42,7 +43,9 @@ class CollisionResponse():
         if velocity_along_normal > 0:
             return
 
-        impulse_scalar = -(1 + material.restitution) * velocity_along_normal / total_inv_mass
+        is_resting_contact = abs(velocity_along_normal) < self.rest_velocity_threshold
+        restitution = 0.0 if is_resting_contact else material.restitution
+        impulse_scalar = -(1 + restitution) * velocity_along_normal / total_inv_mass
         impulse = normal.scale(impulse_scalar)
 
         if rigidbody_a is not None and inv_mass_a > 0:
