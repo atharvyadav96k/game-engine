@@ -5,4 +5,4 @@ class Transform():
         self.size = size
 
     def move(self, x, y):
-        self.position (x, y)
+        self.position  = (self.position[0] + x, self.position[1] + y)

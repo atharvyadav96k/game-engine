@@ -13,7 +13,7 @@ class Engine():
         self.screenManager.registerScreen("main-screen", lambda: MainScreen(self.display, self.screenManager))
         self.screenManager.registerScreen("level-screen", lambda: LevelScreen(self.display, self.screenManager))
         self.screenManager.registerScreen("game", lambda: GameSean(self.display, self.screenManager))
-        self.screenManager.route("main-screen")
+        self.screenManager.route("game")
 
     def start(self):
         running = True

@@ -7,6 +7,7 @@ from physics.collsion_system import CollisionSystem
 from physics.colliders.collider import Collider
 from physics.physics_material import PhysicsMaterial
 from time import time
+import pygame
 
 class GameSean(Screen):
     def __init__(self, display, screenManager):
@@ -32,30 +33,44 @@ class GameSean(Screen):
                 mass=1.0,
                 use_gravity=True
         )
-        self.player2 = GameObject(self.display, "player-2", Transform(
+        self.ground1 = GameObject(self.display, "player-2", Transform(
                 (100, 200),
                 (500, 10)
             )
         )
-        self.player3 = GameObject(self.display, "player-3", Transform(
-             (100, 300),
+        self.ground2 = GameObject(self.display, "player-3", Transform(
+             (400, 400),
              (500, 10)
         ))
-        self.player1.collider = Collider(self.player1, PhysicsMaterial(restitution=0.7, friction=0.3))
-        self.player2.collider = Collider(self.player2, PhysicsMaterial(restitution=0.4, friction=0.8))
-        self.player3.collider = Collider(self.player3, PhysicsMaterial(restitution=0.0, friction=0.2))
-        return [self.player1, self.player2, self.player3]
+        self.player1.collider = Collider(self.player1, PhysicsMaterial(restitution=0.4, friction=0.3))
+        self.ground1.collider = Collider(self.ground1, PhysicsMaterial(restitution=0.0, friction=0.8))
+        self.ground2.collider = Collider(self.ground2, PhysicsMaterial(restitution=0.0, friction=0.2))
+        return [self.player1, self.ground1, self.ground2]
+
+    def inputs(self, events):
+        speed = 400
+        super().inputs(events)
+        for event in events:
+             if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    self.player1.rigidbody.add_velocity((0, -400))
+
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_d]:
+            self.player1.transform.move(speed*self.delta, 0)
+        if keys[pygame.K_a]:
+            self.player1.transform.move(-speed*self.delta, 0) 
 
     def update(self):
         self.currt_time = time()
-        delta = self.currt_time - self.prev_time
+        self.delta = self.currt_time - self.prev_time
         for child in self.children:
             if child.isTriggerd():
                 event = child.getEvent()
                 if event.get("id") == "pause":
                     self.screenManager.route("level-screen")
 
-        self.physics.update(delta)
+        self.physics.update(self.delta)
         self.collisionSystem.update()
         self.prev_time = self.currt_time
 
