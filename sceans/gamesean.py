@@ -42,7 +42,7 @@ class GameSean(Screen):
              (400, 400),
              (500, 10)
         ))
-        self.player1.collider = Collider(self.player1, PhysicsMaterial(restitution=0.4, friction=0.3))
+        self.player1.collider = Collider(self.player1, PhysicsMaterial(restitution=0.7, friction=0.3))
         self.ground1.collider = Collider(self.ground1, PhysicsMaterial(restitution=0.0, friction=0.8))
         self.ground2.collider = Collider(self.ground2, PhysicsMaterial(restitution=0.0, friction=0.2))
         return [self.player1, self.ground1, self.ground2]
@@ -52,7 +52,7 @@ class GameSean(Screen):
         super().inputs(events)
         for event in events:
              if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
+                if event.key == pygame.K_SPACE and self.collisionSystem.are_colliding(self.ground2, self.player1):
                     self.player1.rigidbody.add_velocity((0, -400))
 
         keys = pygame.key.get_pressed()
