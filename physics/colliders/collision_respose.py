@@ -1,5 +1,5 @@
 from core.vector2 import Vector2
-from physics.colliders.collision_math import compute_aabb_manifold
+from physics.colliders.collision_math import compute_manifold
 from physics.physics_material import PhysicsMaterial
 
 
@@ -16,7 +16,7 @@ class CollisionResponse():
         if not collider_a.is_physics_response_enabled() or not collider_b.is_physics_response_enabled():
             return
 
-        info = compute_aabb_manifold(collider_a.get_rect(), collider_b.get_rect())
+        info = compute_manifold(collider_a, collider_b)
         if info is None:
             return
 

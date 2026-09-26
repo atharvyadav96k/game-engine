@@ -5,6 +5,7 @@ from physics.rigidbody import RigidBody
 from physics.physics_system import PhysicsSystem
 from physics.collsion_system import CollisionSystem
 from physics.colliders.collider import Collider
+from physics.colliders.circle_collider import CircleCollider
 from physics.physics_material import PhysicsMaterial
 from time import time
 import pygame
@@ -66,8 +67,8 @@ class GameSean(Screen):
         self.player1.collider = Collider(self.player1, PhysicsMaterial(restitution=0.7, friction=0.2))
         self.ground1.collider = Collider(self.ground1, PhysicsMaterial(restitution=0.0, friction=0.8))
         self.ground2.collider = Collider(self.ground2, PhysicsMaterial(restitution=0.0, friction=0.2))
-        self.boll1.collider = Collider(self.boll1, PhysicsMaterial(restitution=1, friction=0))
-        self.boll2.collider = Collider(self.boll2, PhysicsMaterial(restitution=1, friction=0))
+        self.boll1.collider = CircleCollider(self.boll1, PhysicsMaterial(restitution=1, friction=0))
+        self.boll2.collider = CircleCollider(self.boll2, PhysicsMaterial(restitution=1, friction=0))
 
         return [self.player1, self.ground1, self.ground2,self.boll1, self.boll2]
 
@@ -80,10 +81,13 @@ class GameSean(Screen):
                     self.player1.rigidbody.add_velocity((0, -400))
 
         keys = pygame.key.get_pressed()
+        current_y_velocity = self.player1.rigidbody.velocity[1]
         if keys[pygame.K_d]:
-            self.player1.rigidbody.set_velocity((speed, 0))
-        if keys[pygame.K_a]:
-            self.player1.rigidbody.set_velocity((-speed, 0))
+            self.player1.rigidbody.set_velocity((speed, current_y_velocity))
+        elif keys[pygame.K_a]:
+            self.player1.rigidbody.set_velocity((-speed, current_y_velocity))
+        else:
+            self.player1.rigidbody.set_velocity((0, current_y_velocity))
 
     def update(self):
         self.currt_time = time()
