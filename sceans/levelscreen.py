@@ -18,4 +18,4 @@ class LevelScreen(Screen):
                 if event.get("id") == "btn-3":
                     self.screenManager.route("main-screen")
                 if event.get("id").isdigit():
-                    self.screenManager.route("game", data={"level": child.id})
+                    self.screenManager.route("shooter", data={"level": child.id})
