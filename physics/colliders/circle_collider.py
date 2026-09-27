@@ -21,6 +21,10 @@ class CircleCollider():
         size = self.game_object.transform.size
         return (position[0] + size[0] / 2, position[1] + size[1] / 2)
 
+    def get_moment_of_inertia(self, mass):
+        radius = self.get_radius()
+        return 0.5 * mass * radius ** 2
+
     def is_physics_response_enabled(self):
         return self.enable_physics_response
 

@@ -31,3 +31,7 @@ class PhysicsSystem():
                 transform.position[0] + rigidbody.velocity[0] * delta,
                 transform.position[1] + rigidbody.velocity[1] * delta
             )
+
+            if rigidbody.is_rotation_enabled():
+                rigidbody.angular_velocity += rigidbody.torque * rigidbody.get_inverse_inertia() * delta
+                transform.rotation += rigidbody.angular_velocity * delta

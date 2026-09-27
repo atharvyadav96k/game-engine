@@ -41,7 +41,7 @@ class GameSean(Screen):
         self.player1.rigidbody = RigidBody(
                 (0, 0),
                 (0, 0),
-                mass=1.0,
+                mass=5.0,
                 use_gravity=True
         )
         self.wall_top = GameObject(self.display, "wall-top", Transform(
@@ -72,6 +72,7 @@ class GameSean(Screen):
         self.boll1.rigidbody = RigidBody(
             (50, 0),
             (0, 0),
+            use_rotation=True
         )
         self.boll2 = GameObject(self.display, "boll-2", Transform(
             (450, 550),
@@ -81,6 +82,7 @@ class GameSean(Screen):
         self.boll2.rigidbody = RigidBody(
              (-50, 0),
              (0, 0),
+             use_rotation=True
         )
 
         block_size = 20
@@ -92,8 +94,8 @@ class GameSean(Screen):
 
         def add_block(name, x, y):
             block = GameObject(self.display, name, Transform((x, y), (block_size, block_size)), (180, 60, 30))
-            block.rigidbody = RigidBody((0, 0), (0, 0), mass=1.0, use_gravity=True)
-            block.collider = Collider(block, PhysicsMaterial(restitution=0, friction=0.6))
+            block.rigidbody = RigidBody((0, 0), (0, 0), mass=2.0, use_gravity=True, use_rotation=True)
+            block.collider = Collider(block, PhysicsMaterial(restitution=0.001, friction=1))
             self.blocks.append(block)
 
         left_x = self.player1.transform.position[0] - half_gap - block_size
@@ -132,7 +134,7 @@ class GameSean(Screen):
             *self.blocks
         ]
 
-    def trigger_shockwave(self, origin, max_radius=300.0, expansion_speed=500.0, strength=800.0,
+    def trigger_shockwave(self, origin, max_radius=300.0, expansion_speed=800.0, strength=1000.0,
                           falloff=linear_falloff):
         wave = ShockWave(origin, self.game_objects, max_radius, expansion_speed, strength, falloff)
         self.shockwaves.append(wave)

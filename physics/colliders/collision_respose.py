@@ -30,22 +30,40 @@ class CollisionResponse():
             return
 
         normal = info.normal
+        contact_point = info.contact_point
+
+        inv_inertia_a = rigidbody_a.get_inverse_inertia() if rigidbody_a is not None else 0.0
+        inv_inertia_b = rigidbody_b.get_inverse_inertia() if rigidbody_b is not None else 0.0
+
+        center_a = Vector2.from_tuple(collider_a.get_center())
+        center_b = Vector2.from_tuple(collider_b.get_center())
+        r_a = contact_point - center_a
+        r_b = contact_point - center_b
 
         self._apply_positional_correction(object_a, object_b, normal, info.penetration, inv_mass_a, inv_mass_b, total_inv_mass)
 
         material = PhysicsMaterial.combine(collider_a.material, collider_b.material)
 
+        angular_velocity_a = rigidbody_a.angular_velocity if (rigidbody_a is not None and inv_inertia_a > 0) else 0.0
+        angular_velocity_b = rigidbody_b.angular_velocity if (rigidbody_b is not None and inv_inertia_b > 0) else 0.0
+
         velocity_a = Vector2.from_tuple(rigidbody_a.velocity) if rigidbody_a is not None else Vector2(0, 0)
         velocity_b = Vector2.from_tuple(rigidbody_b.velocity) if rigidbody_b is not None else Vector2(0, 0)
-        relative_velocity = velocity_b - velocity_a
+        point_velocity_a = velocity_a + r_a.perpendicular().scale(angular_velocity_a)
+        point_velocity_b = velocity_b + r_b.perpendicular().scale(angular_velocity_b)
+        relative_velocity = point_velocity_b - point_velocity_a
         velocity_along_normal = relative_velocity.dot(normal)
 
         if velocity_along_normal > 0:
             return
 
+        angular_term_a = (r_a.cross(normal) ** 2) * inv_inertia_a
+        angular_term_b = (r_b.cross(normal) ** 2) * inv_inertia_b
+        effective_mass = total_inv_mass + angular_term_a + angular_term_b
+
         is_resting_contact = abs(velocity_along_normal) < self.rest_velocity_threshold
         restitution = 0.0 if is_resting_contact else material.restitution
-        impulse_scalar = -(1 + restitution) * velocity_along_normal / total_inv_mass
+        impulse_scalar = -(1 + restitution) * velocity_along_normal / effective_mass
         impulse = normal.scale(impulse_scalar)
 
         if rigidbody_a is not None and inv_mass_a > 0:
@@ -53,7 +71,14 @@ class CollisionResponse():
         if rigidbody_b is not None and inv_mass_b > 0:
             rigidbody_b.velocity = (velocity_b + impulse.scale(inv_mass_b)).to_tuple()
 
-        self._apply_friction(object_a, object_b, normal, material, impulse_scalar, inv_mass_a, inv_mass_b, total_inv_mass)
+        if rigidbody_a is not None and inv_inertia_a > 0:
+            rigidbody_a.angular_velocity -= inv_inertia_a * r_a.cross(impulse)
+        if rigidbody_b is not None and inv_inertia_b > 0:
+            rigidbody_b.angular_velocity += inv_inertia_b * r_b.cross(impulse)
+
+        self._apply_friction(object_a, object_b, normal, material, impulse_scalar,
+                              inv_mass_a, inv_mass_b, inv_inertia_a, inv_inertia_b,
+                              r_a, r_b, total_inv_mass)
 
     def _apply_positional_correction(self, object_a, object_b, normal, penetration, inv_mass_a, inv_mass_b, total_inv_mass):
         correction_magnitude = max(penetration - self.slop, 0.0) / total_inv_mass * self.percent_correction
@@ -64,21 +89,32 @@ class CollisionResponse():
         if object_b.rigidbody is not None and inv_mass_b > 0:
             self._move(object_b, correction.scale(inv_mass_b))
 
-    def _apply_friction(self, object_a, object_b, normal, material, impulse_scalar, inv_mass_a, inv_mass_b, total_inv_mass):
+    def _apply_friction(self, object_a, object_b, normal, material, impulse_scalar,
+                         inv_mass_a, inv_mass_b, inv_inertia_a, inv_inertia_b,
+                         r_a, r_b, total_inv_mass):
         rigidbody_a = object_a.rigidbody
         rigidbody_b = object_b.rigidbody
 
+        angular_velocity_a = rigidbody_a.angular_velocity if (rigidbody_a is not None and inv_inertia_a > 0) else 0.0
+        angular_velocity_b = rigidbody_b.angular_velocity if (rigidbody_b is not None and inv_inertia_b > 0) else 0.0
+
         velocity_a = Vector2.from_tuple(rigidbody_a.velocity) if rigidbody_a is not None else Vector2(0, 0)
         velocity_b = Vector2.from_tuple(rigidbody_b.velocity) if rigidbody_b is not None else Vector2(0, 0)
-        relative_velocity = velocity_b - velocity_a
+        point_velocity_a = velocity_a + r_a.perpendicular().scale(angular_velocity_a)
+        point_velocity_b = velocity_b + r_b.perpendicular().scale(angular_velocity_b)
+        relative_velocity = point_velocity_b - point_velocity_a
 
         tangent_velocity = relative_velocity - normal.scale(relative_velocity.dot(normal))
         tangent = tangent_velocity.normalize()
         if tangent.length() == 0:
             return
 
+        angular_term_a = (r_a.cross(tangent) ** 2) * inv_inertia_a
+        angular_term_b = (r_b.cross(tangent) ** 2) * inv_inertia_b
+        tangent_effective_mass = total_inv_mass + angular_term_a + angular_term_b
+
         velocity_along_tangent = relative_velocity.dot(tangent)
-        friction_impulse_scalar = -velocity_along_tangent / total_inv_mass
+        friction_impulse_scalar = -velocity_along_tangent / tangent_effective_mass
 
         max_friction = abs(impulse_scalar) * material.friction
         friction_impulse_scalar = max(-max_friction, min(max_friction, friction_impulse_scalar))
@@ -88,6 +124,11 @@ class CollisionResponse():
             rigidbody_a.velocity = (velocity_a - friction_impulse.scale(inv_mass_a)).to_tuple()
         if rigidbody_b is not None and inv_mass_b > 0:
             rigidbody_b.velocity = (velocity_b + friction_impulse.scale(inv_mass_b)).to_tuple()
+
+        if rigidbody_a is not None and inv_inertia_a > 0:
+            rigidbody_a.angular_velocity -= inv_inertia_a * r_a.cross(friction_impulse)
+        if rigidbody_b is not None and inv_inertia_b > 0:
+            rigidbody_b.angular_velocity += inv_inertia_b * r_b.cross(friction_impulse)
 
     def _move(self, obj, delta_vector):
         obj.transform.position = (

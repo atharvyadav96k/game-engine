@@ -33,3 +33,17 @@ class Vector2():
         if length == 0:
             return Vector2(0, 0)
         return Vector2(self.x / length, self.y / length)
+
+    def cross(self, other):
+        return self.x * other.y - self.y * other.x
+
+    def perpendicular(self):
+        return Vector2(-self.y, self.x)
+
+    def rotate(self, angle):
+        cos_a = math.cos(angle)
+        sin_a = math.sin(angle)
+        return Vector2(
+            self.x * cos_a - self.y * sin_a,
+            self.x * sin_a + self.y * cos_a
+        )
