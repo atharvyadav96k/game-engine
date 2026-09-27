@@ -10,7 +10,7 @@ class PhysicsSystem():
                 continue
 
             rigidbody = object.rigidbody
-            if rigidbody.is_kinematic_enabled():
+            if rigidbody.is_kinematic_enabled() or rigidbody.is_asleep():
                 continue
 
             transform = object.transform
@@ -35,3 +35,5 @@ class PhysicsSystem():
             if rigidbody.is_rotation_enabled():
                 rigidbody.angular_velocity += rigidbody.torque * rigidbody.get_inverse_inertia() * delta
                 transform.rotation += rigidbody.angular_velocity * delta
+
+            rigidbody.update_sleep_state(delta)

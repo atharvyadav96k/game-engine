@@ -94,7 +94,7 @@ class GameSean(Screen):
 
         def add_block(name, x, y):
             block = GameObject(self.display, name, Transform((x, y), (block_size, block_size)), (180, 60, 30))
-            block.rigidbody = RigidBody((0, 0), (0, 0), mass=2.0, use_gravity=True, use_rotation=True)
+            block.rigidbody = RigidBody((0, 0), (0, 0), mass=30.0, use_gravity=True, use_rotation=True)
             block.collider = Collider(block, PhysicsMaterial(restitution=0.001, friction=1))
             self.blocks.append(block)
 
@@ -108,9 +108,10 @@ class GameSean(Screen):
 
         y = floor_y - block_size * (wall_height + 1)
         row = 0
+        arch_step = block_size / 4
         while right_x - left_x > block_size:
-            left_x += block_size / 2
-            right_x -= block_size / 2
+            left_x += arch_step
+            right_x -= arch_step
             add_block(f"arch-left-{row}", left_x, y)
             add_block(f"arch-right-{row}", right_x, y)
             y -= block_size
